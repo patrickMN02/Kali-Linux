@@ -1,2 +1,58 @@
-# Kali-Linux
+# Simulando um Ataque de Brute Force de Senhas com Medusa e Kali Linux
 O objetivo desse projeto é implementar, documentar e compartilhar um projeto prático utilizando Kali Linux e a ferramenta Medusa, em conjunto com ambientes vulneráveis, para simular cenários de ataque de força bruta e exercitar medidas de prevenção.
+
+# Ambientes 
+Para a elaboração desse projeto foram utilizadas duas VMs (Kali Linux e Metasploitable 2) no Virtual Box, com rede interna (host-only). 
+
+# Simulando um ataque de força bruta em FTP 
+Para iniciarmos a simulação de ataque, precisamos primeiro, verificar se existe comunicação entre as duas máquinas virtuais, para isso utilizaremos o comando: 
+     
+     - ping -c 3 192.168.56.101  
+
+Sendo: 
+1. "ping": utilitário que enviar ICMP Echo Request para um host e aguarda por um ICMP Echo Reply. Usado para testar conectividade de rede e latência;
+
+   
+2. "-c 3 (count = 3)": envia exatamente 3 pacotes ICMP e então termina;
+
+   
+3. "192.168.56.101": endereço IPv4 da máquina que sofrerá o ataque;
+
+<img width="536" height="421" alt="image" src="https://github.com/user-attachments/assets/b95583bb-afca-4324-a9ce-0b5e18ad531b" />
+
+
+Em caso de sucesso na comunicação, podemos verificar quais serviços estão disponíveis no sistema alvo, para isso iremos utilizar a ferramenta "nmap" que serve para escanear redes, identificar dispositivos conectados e encontrar portas abertas do sistema. Utilizaremos o seguinte comando:
+
+    - nmap -sV -p 21,22,80,445,139 192.168.56.101
+
+Sendo:
+
+1. "-sV": parâmetro uitlizado para identificar a versão do serviçoqu está rodando em cada porta;
+   
+2. "-p 21,22,80,445,139": portas comuns para os serviços FTP, SSH, HTTP e SMB;
+
+Ao final do scan, deverá ser retornado uma saída indicando se existem, ou não, portas abertas e as versões do serviços.
+<img width="531" height="423" alt="image" src="https://github.com/user-attachments/assets/8f998962-935c-42fa-a2a3-5745f96ad827" />
+
+Com isso, podemos identificar que o serviço está ativo e que é possível acessá-lo, porém não sabemos qual o login e a senha. 
+Para isso devemos criar listas com usuários e senhas comuns e utilizar a ferramenta "Medusa" para realizar um ataque de força bruta.
+Para criarmos o arquivo com a lista de usuários e senha, utilizaresmo o comando:
+
+Para os usuários:
+
+    - echo -e "user\nmsfadmin\nadmin\nroot" > users.txt
+
+E para as senhas:
+
+    - echo -e "123456\npassword\nqwerty\nmsfadmin" > pass,txt
+
+Assim que criado as listas, utilizaremos o seguinte comando:
+
+    - medusa -h 192.168.56.101 -U users.txt -P pass.txt -M ftp -t 6
+
+O comando executa um ataque de força bruta/credential stuffing automatizado contra o serviço FTP do host, usando a lista de usuários "users.txt" e a lista de senhas "pass.txt" com 6 threads paralelas.
+
+<img width="575" height="549" alt="image" src="https://github.com/user-attachments/assets/dda7147e-9c9c-4c24-95a2-525b5311b53b" />
+
+Ao fim da execução é possível observar que o medusa obteve êxito utilizando as credenciais "msfadmin"
+# Automação de tentativas em formulário web (DVWA)
