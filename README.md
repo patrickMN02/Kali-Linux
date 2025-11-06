@@ -7,7 +7,7 @@ Para a elaboração desse projeto foram utilizadas duas VMs (Kali Linux e Metasp
 # Simulando um ataque de força bruta em FTP 
 Para iniciarmos a simulação de ataque, precisamos primeiro, verificar se existe comunicação entre as duas máquinas virtuais, para isso utilizaremos o comando: 
      
-     - ping -c 3 192.168.56.101  
+      ping -c 3 192.168.56.101  
 
 Sendo: 
 1. "ping": utilitário que enviar ICMP Echo Request para um host e aguarda por um ICMP Echo Reply. Usado para testar conectividade de rede e latência;
@@ -23,7 +23,7 @@ Sendo:
 
 Em caso de sucesso na comunicação, podemos verificar quais serviços estão disponíveis no sistema alvo, para isso iremos utilizar a ferramenta "nmap" que serve para escanear redes, identificar dispositivos conectados e encontrar portas abertas do sistema. Utilizaremos o seguinte comando:
 
-    - nmap -sV -p 21,22,80,445,139 192.168.56.101
+     nmap -sV -p 21,22,80,445,139 192.168.56.101
 
 Sendo:
 
@@ -40,19 +40,36 @@ Para criarmos o arquivo com a lista de usuários e senha, utilizaresmo o comando
 
 Para os usuários:
 
-    - echo -e "user\nmsfadmin\nadmin\nroot" > users.txt
+     echo -e "user\msfadmin\nadmin\nroot" > users.txt
 
 E para as senhas:
 
-    - echo -e "123456\npassword\nqwerty\nmsfadmin" > pass,txt
+     echo -e "123456\npassword\nqwerty\msfadmin" > pass.txt
 
 Assim que criado as listas, utilizaremos o seguinte comando:
 
-    - medusa -h 192.168.56.101 -U users.txt -P pass.txt -M ftp -t 6
+     medusa -h 192.168.56.101 -U users.txt -P pass.txt -M ftp -t 6
 
 O comando executa um ataque de força bruta/credential stuffing automatizado contra o serviço FTP do host, usando a lista de usuários "users.txt" e a lista de senhas "pass.txt" com 6 threads paralelas.
 
 <img width="575" height="549" alt="image" src="https://github.com/user-attachments/assets/dda7147e-9c9c-4c24-95a2-525b5311b53b" />
 
-Ao fim da execução é possível observar que o medusa obteve êxito utilizando as credenciais "msfadmin"
+Ao fim da execução é possível observar que o medusa obteve êxito utilizando as credenciais "msfadmin" e "msfadmin" para usuário e senha respectivamente. Isso significa que é possível acessar manualmente o serviço FTP.
+
+     ftp 192.168.56.101
+
+<img width="991" height="575" alt="image" src="https://github.com/user-attachments/assets/132c2e58-295e-46fb-8474-5eef6585f721" />
+
+# Como defender um serviço FTP contra esse tipo de ataque?
+
+1. Desabilitar FTP e usar SFTP/FTPS (FTP é antigo e inseguro).
+
+2. Forçar senhas fortes e bloqueio após um número determinado de tentativas (fail2ban).
+
+3. Limitar conexões por IP e implementar rate limiting.
+
+4. Monitorar logs e usar SIEM para detectar padrões de brute force.
+
+5. Usar autenticação por chave sempre que possível.
+
 # Automação de tentativas em formulário web (DVWA)
