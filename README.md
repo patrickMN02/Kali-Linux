@@ -94,4 +94,19 @@ Após a execução do comando, podemos verificar que o medusa obteve sucesso em 
 <img width="1260" height="618" alt="image" src="https://github.com/user-attachments/assets/691018e4-63d2-4836-a537-b5be052f1bad" />
 
 # Password spraying em SMB com enumeração de usuários
+A seguir simularemos um ataque de password spraying contra serviços SMB. O SMB (Server Message Block) é o protocolo utilizado pela Microsoft (e por implementações como Samba) para compartilhamento de arquivos e autenticação de contas. Ao invés de testar muitas senhas contra um único usuário, o password spraying testa um conjunto pequeno de senhas comuns contra múltiplos usuários para evitar detecção por bloqueios de conta. O objetivo desta simulação é identificar contas frágeis, observar artefatos de logs/alertas e validar medidas de mitigação em um ambiente de laboratório controlado.<br/>
+Para começarmos, devemos enumerar os usuários, afim de confirmar quais são os usuários reais do sistema. Para isso iremos utilizar a ferramenta "enum4linux", através do comando:
+
+    enum4linux -a 192.168.56.101 | tee enum4_output.txt
+
+<img width="909" height="630" alt="image" src="https://github.com/user-attachments/assets/5f6a079d-00f0-4c9e-a84f-b0f2b354a540" />
+
+Ao final da execução podemos encontrar algumas informações como nome do host, versão SMB suportada, usuários e contas, possíveis vulnerabilidades etc.
+
+Utilizando o seguinte comando podemos listar os usuários encontrados:
+
+    grep -i "User:" enum4_output.txt | sort -u
+    
+<img width="350" height="584" alt="image" src="https://github.com/user-attachments/assets/3c2ef8cd-ea0e-4199-acce-416a13865e71" />
+
 
